@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'api',#Need to check the relationship with annoyingcallers project
 ]
 
 MIDDLEWARE = [
