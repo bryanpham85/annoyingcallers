@@ -13,7 +13,7 @@ class Registered_Device(models.Model):
 	)
 	deviceId = models.CharField(max_length=100, primary_key=True) #UUID or AID of device
 	devicePlatform = models.CharField(max_length=20, choices=PLATFORM)
-	owner = models.ForeignKey(User, blank=True) ## App can be use with annonymous mode
+	owner = models.ForeignKey(User) ## App can be use with annonymous mode
 	installed_date = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
@@ -28,10 +28,10 @@ class Caller(models.Model):
 		('VN(+84)', '+84'),
 	)
 	callerId = models.AutoField(primary_key=True)
-	country_code = models.CharField(max_length = 5, choices=COUNTRY_CODE, null=False)
+	country_code = models.CharField(max_length=5, choices=COUNTRY_CODE, null=False)
 	caller_number = models.CharField(max_length = 11, null=False)
 	registered_date = models.DateTimeField(auto_now_add=True)
-	registered_by = models.ForeignKey(Registered_Device)
+	registered_by = models.ForeignKey('Registered_Device')
 
 	class Meta:
 		db_table = ('ac_caller')
@@ -63,9 +63,11 @@ class Caller_Categories(models.Model):
 	The caller marked into category by owner from device, this table only count the number of report time from community
 	"""
 	callerId = models.ForeignKey('Caller', null=False)
-	globalCategoryId = models.ForeignKey('Category', null=False)
-	report_count = models.IntegerField(default=0)
+	categoryId = models.ForeignKey('Category', null=False)
+	total_report_count = models.IntegerField(default=0)
+	positive_sentiment_count = models.IntegerField(default=0)
+	negative_sentiment_count = models.IntegerField(default=0)
 
 	class Meta:
 		db_table = ('ac_caller_category')
-		index_together = ['callerId', 'globalCategoryId']
+		index_together = ['callerId', 'categoryId']

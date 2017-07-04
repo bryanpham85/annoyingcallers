@@ -1,0 +1,38 @@
+#########Install pip on MAC OS############
+From Terminal execute command
+
+sudo easy_install pip
+
+#############Install virualenv on MAC OS#########
+From Terminal execute command
+
+pip install virtualenv
+
+######## Set up env for AnnoyingCall
+From Terminal execute following command in respecting order
+
+mkdir annoyingcallers_prj
+cd annoyingcallers_prj
+virtualenv env
+source env/bin/activate
+
+(Note: now you are in virtual env of project. Start with installing dependency)
+
+pip install django
+pip install djangorestframework
+
+###### GIT Clone #########
+Using Git Desktop or commandline depend on preference
+Git repos URL: https://github.com/bryanpham85/annoyingcallers.git
+
+##### Set Up DB and migrate Data##########
+In Postgres create DB named: annoyingcallers
+
+change DB setting in "annoyingcallers/settings.py" in DATABASE section according to your local setting (leave it as it is if all install use default setting)
+
+From Terminal go to your "annoyingallers" folder (where you can see "manage.py"). Execute following commands (with Python3 - default of MAC OS is python2.7, please install python 3)
+
+python3 manage.py makemigrations
+python3 manage.py migrate
+
+If there's no red error indicate in terminal you can check up the created tables in Posgre Client App (recommend DBeaver)
