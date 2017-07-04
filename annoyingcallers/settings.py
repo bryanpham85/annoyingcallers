@@ -105,13 +105,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASS':[
-        'rest_framewrok.permissions.IsAdminUser',
-    ],
-    'PAGE_SIZE': 10
-}
-
+# REST_FRAMEWORK = {
+#     'DEFAULT_PERMISSION_CLASS':[
+#         'rest_framewrok.permissions.IsAdminUser',
+#     ],
+#     'PAGE_SIZE': 10
+# }
+APPEND_SLASH = False
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
