@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'rest_framework',
     'api',#Need to check the relationship with annoyingcallers project
 ]
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'annoyingcallers.urls'
@@ -111,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 #     ],
 #     'PAGE_SIZE': 10
 # }
-APPEND_SLASH = False
+APPEND_SLASH = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

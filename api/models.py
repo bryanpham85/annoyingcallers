@@ -25,7 +25,8 @@ class Caller(models.Model):
 	Description: a phone number is a caller at global of app
 	"""
 	COUNTRY_CODE = (
-		('VN(+84)', '+84'),
+		('+84', 'VN(+84)'),
+		('+1', 'US(+1)'),
 	)
 	callerId = models.AutoField(primary_key=True)
 	country_code = models.CharField(max_length=5, choices=COUNTRY_CODE, null=False)
@@ -47,8 +48,8 @@ class Category(models.Model):
 	Global used cross platform
 	"""
 	CATEGORY_TYPE = (
-			('Private', 1),
-			('Global', 2),
+			(1, 'Private'),
+			(2, 'Global'),
 		)
 	name = models.CharField(max_length=100, null=False, unique=True)
 	category_type = models.IntegerField(null=False, choices=CATEGORY_TYPE)
