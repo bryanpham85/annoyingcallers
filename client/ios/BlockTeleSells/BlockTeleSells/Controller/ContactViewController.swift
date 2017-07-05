@@ -65,10 +65,20 @@ class ContactViewController: UIViewController, UITextFieldDelegate {
         let lastName = contactLastName.text ?? ""
         let phoneNumber = contactPhoneNumber.text ?? ""
         let description = contactDescription.text ?? ""
+        let cid = contact?.id
         
-        if let id = DataManager.instance.addContact(cfirstName: firstName,clastName: lastName, cphoneNumber: phoneNumber, cdescription: description){
-            contact = Contact(id: 1, phoneNumber: phoneNumber, firstName: firstName, lastName: lastName ,description: description)
+        if(contact != nil && contact?.id != nil){
+            let contactForSave = Contact(id: cid!, phoneNumber: phoneNumber, firstName: firstName, lastName: lastName ,description: description)
+            if DataManager.instance.updateContact(cid: cid!, newContact: contactForSave){
+                contact = Contact(id: cid!, phoneNumber: phoneNumber, firstName: firstName, lastName: lastName ,description: description)
+            }
+        }else{
+            let id = DataManager.instance.addContact(cfirstName: firstName,clastName: lastName, cphoneNumber: phoneNumber, cdescription: description)
+            if id! > 0{
+                contact = Contact(id: id!, phoneNumber: phoneNumber, firstName: firstName, lastName: lastName ,description: description)
+            }
         }
+        
         
         super.prepare(for: segue, sender: sender)
     }

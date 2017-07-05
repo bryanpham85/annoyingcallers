@@ -66,6 +66,7 @@ class ContactTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source
+            DataManager.instance.deleteContact(cid: contacts[indexPath.row].id!)
             contacts.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
             
@@ -141,6 +142,11 @@ class ContactTableViewController: UITableViewController {
     }
     //MARK: private
     private func loadContacts() {
+        let phones = DataManager.instance.getPhoneNumbers()
+        for (number, fullname) in phones {
+            NSLog(number.description)
+            NSLog(fullname)
+        }
         contacts = DataManager.instance.getContacts()
     }
 

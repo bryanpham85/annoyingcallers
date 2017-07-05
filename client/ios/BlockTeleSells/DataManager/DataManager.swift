@@ -9,6 +9,7 @@
 import Foundation
 import SQLite
 import MMWormhole
+import CallKit
 public final class DataManager {
     public static let instance = DataManager()
     private let database: Connection?
@@ -44,6 +45,22 @@ public final class DataManager {
 
     private func notifyContactsUpdated(){
         wormhole.passMessageObject("Contact Updated" as NSCoding, identifier: "contacts")
+        reloadExtension()
+    }
+    private func reloadExtension(){
+        var callDirManager = CXCallDirectoryManager.sharedInstance;
+ 
+        callDirManager.reloadExtension(withIdentifier: "com.ste.CallBlock.CallBlockExtension",
+            completionHandler: {(error) in
+            
+                if (error == nil)
+                {
+                    print("Reloaded extension successfully")
+                } else {
+                    print("Reloaded extension failed with ")
+                }
+            
+        })
     }
     func createTable() {
         do {
@@ -69,6 +86,17 @@ public final class DataManager {
             return -1
         }
     }
+    public func getPhoneNumbers() -> [Int64: String] {
+        let contacts2 = getContacts();
+        
+        var dictionary =  [Int64 : String]()
+        for contact in contacts2 {
+            let number = Int64("84" + String(describing: Int64(contact.phoneNumber)!))
+            dictionary.updateValue(contact.firstName + " " + contact.lastName, forKey:number!)
+        }
+        
+        return dictionary
+    }
     public func getContacts() -> [Contact] {
         var contacts = [Contact]()
 
@@ -84,7 +112,7 @@ public final class DataManager {
         } catch {
             print("Select failed")
         }
-
+        
         return contacts
     }
     public func deleteContact(cid: Int64) -> Bool {

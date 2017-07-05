@@ -10,12 +10,11 @@ import Foundation
 import CallKit
 import DataManager
 class CallDirectoryHandler: CXCallDirectoryProvider {
-    var contacts: [Contact] = []
     override func beginRequest(with context: CXCallDirectoryExtensionContext) {
         context.delegate = self
-        contacts = DataManager.instance.getContacts()
+        let contacts = DataManager.instance.getContacts()
         do {
-            try addBlockingPhoneNumbers(to: context)
+            try addBlockingPhoneNumbers(to: context, contacts: contacts)
         } catch {
             NSLog("Unable to add blocking phone numbers")
             let error = NSError(domain: "CallDirectoryHandler", code: 1, userInfo: nil)
@@ -24,7 +23,7 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
         }
 
         do {
-            try addIdentificationPhoneNumbers(to: context)
+            try addIdentificationPhoneNumbers(to: context, contacts: contacts)
         } catch {
             NSLog("Unable to add identification phone numbers")
             let error = NSError(domain: "CallDirectoryHandler", code: 2, userInfo: nil)
@@ -35,41 +34,29 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
         context.completeRequest()
     }
 
-    private func addBlockingPhoneNumbers(to context: CXCallDirectoryExtensionContext) throws {
+    private func addBlockingPhoneNumbers(to context: CXCallDirectoryExtensionContext, contacts: [Contact]) throws {
         // Retrieve phone numbers to block from data store. For optimal performance and memory usage when there are many phone numbers,
         // consider only loading a subset of numbers at a given time and using autorelease pool(s) to release objects allocated during each batch of numbers which are loaded.
         //
         // Numbers must be provided in numerically ascending order.
-        var phoneNumbers: [Int64] = []
-        for contact in contacts {
-            let number = Int64("84" + String(describing: Int64(contact.phoneNumber)))
-            phoneNumbers.append(number!)
+        
+        var phones = DataManager.instance.getPhoneNumbers()
+        let sortedKeys = Array(phones.keys).sorted(by: <)
+        for (number) in sortedKeys {
+            context.addBlockingEntry(withNextSequentialPhoneNumber: number)
         }
-        //let phoneNumbers: [CXCallDirectoryPhoneNumber] = [ 843654675676, 841654675676]
-        for phoneNumber in phoneNumbers.sorted(by: <) {
-            context.addBlockingEntry(withNextSequentialPhoneNumber: phoneNumber)
-        }
+        
     }
-
-    private func addIdentificationPhoneNumbers(to context: CXCallDirectoryExtensionContext) throws {
+    private func addIdentificationPhoneNumbers(to context: CXCallDirectoryExtensionContext, contacts: [Contact]) throws {
         // Retrieve phone numbers to identify and their identification labels from data store. For optimal performance and memory usage when there are many phone numbers,
         // consider only loading a subset of numbers at a given time and using autorelease pool(s) to release objects allocated during each batch of numbers which are loaded.
         //
         // Numbers must be provided in numerically ascending order.
-        var phoneNumbers: [Int64] = []
-        var labels: [String] = []
-        for contact in contacts {
-            let number = Int64("84" + String(describing: Int64(contact.phoneNumber)))
-            phoneNumbers.append(number!)
-            labels.append(contact.firstName + " " + contact.lastName)
-        }
-        if(phoneNumbers.count == 0){
-            phoneNumbers = [ 841654675676 ]
-            labels = [ "Telemarketer2" ]
-        }
-
-        for (phoneNumber, label) in zip(phoneNumbers, labels) {
-            context.addIdentificationEntry(withNextSequentialPhoneNumber: phoneNumber, label: label)
+        
+        var phones = DataManager.instance.getPhoneNumbers()
+        let sortedKeys = Array(phones.keys).sorted(by: <)
+        for (number) in sortedKeys {
+            context.addIdentificationEntry(withNextSequentialPhoneNumber: number, label: phones[number]!)
         }
     }
 
