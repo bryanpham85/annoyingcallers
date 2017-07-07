@@ -41,6 +41,9 @@ class Caller(models.Model):
 			models.Index(fields=['country_code', 'caller_number'], name='caller_index')
 		]
 
+	def __str__(self):
+		return str(self.callerId) + str(self.caller_number)
+
 
 
 class Category(models.Model):

@@ -13,11 +13,6 @@ class GroupSerializer (serializers.HyperlinkedModelSerializer):
 		fields = ('url', 'name')
 
 class CallerSerializer(serializers.ModelSerializer):
-	# callerId = serializers.IntegerField(read_only=True)
-	# country_code = serializers.CharField(required=True, allow_blank=False)
-	# caller_number = serializers.CharField(required=True, allow_blank=False, max_length=11)
-	# registered_date = serializers.DateTimeField(required=False)
-	# registered_by = serializers.CharField(required=True)
 	class Meta:
 		model = Caller
 		fields = ('callerId', 'country_code', 

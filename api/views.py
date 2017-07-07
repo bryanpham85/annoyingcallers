@@ -1,71 +1,53 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
-from api.serializers import UserSerializer, GroupSerializer
-from django.http import HttpResponse,JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
 from api.models import Caller
 from api.serializers import CallerSerializer
+from rest_framework import status
+from rest_framework.views import APIView
+from django.http import Http404
+from rest_framework.response import Response
 
 
-class UserViewSet(viewsets.ModelViewSet):
-	# API endpoint to allow user view and edit
-	queryset = User.objects.all().order_by('date_joined')
-	serializer_class = UserSerializer
+class CallerList(APIView):
 
-class GroupViewSet(viewsets.ModelViewSet):
-	queryset = Group.objects.all().order_by('name')
-	serializer_class = GroupSerializer
-
-
-@csrf_exempt
-def caller_list(request):
-	"""
-	List all caller or create a new caller
-	"""
-	print("I'm in call list")
-	if request.method == "GET":
+	def get(self, request, format=None):
 		callers = Caller.objects.all()
 		serializer = CallerSerializer(callers, many=True)
-		return JsonResponse(serializer.data, safe=False)
-	elif request.method == "POST":
-		data = JSONParser().parse(request)
-		serializer = CallerSerializer(data=data)
+		return Response(serializer.data)
+
+
+	def post(self, request, format=None):
+		serializer = CallerSerializer(data=request.data)
 		if serializer.is_valid():
 			serializer.save()
-			return JsonResponse(serialize.data, status=201)
-		else:
-			return JsonResponse(serializer.errors, status=400)
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@csrf_exempt
-def caller_detail(request, pk):
-	"""
-	Retreive update or delete a Caller
-	"""
-	print("I'm in call detailed")
-	try:
-		caller = Caller.objects.get(callerId=pk)
-	except Caller.DoesNotExist:
-		return JsonResponse(status=404)
 
-	if request.method == 'GET':
+class CallerDetail(APIView):
+
+	def get_object(self, pk):
+		try:
+			caller = Caller.objects.get(pk=pk)
+			return caller
+		except Caller.DoesNotExist:
+			raise Http404
+
+	def get(self, request, pk, format=None):
+		caller = self.get_object(pk)
 		serializer = CallerSerializer(caller)
-		return JsonResponse(serializer.data)
+		return Response(serializer.data)
 
-	elif request.method == 'PUT':
-		data = JSONParser().parse(request)
-		serializer = CallerSerializer(caller, data=data)
+	def put(self, request, pk, format=None):
+		caller = self.get_object(pk)
+		serializer = CallerSerializer(caller, request.data)
 		if serializer.is_valid():
 			serializer.save()
-			return JsonResponse(serializer.data)
-		else:
-			return JsonResponse(serializer.errors, status=404)
+			return Response(serializer.data)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	elif request.method == 'DELETE':
+	def delete(self, request, pk, format=None):
+		caller = self.get_object(pk)
 		caller.delete()
-		return JsonResponse(status=204)
-
-
-
+		return Response(status=status.HTTP_204_NO_CONTENT)
