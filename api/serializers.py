@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User, Group
-from api.models import Caller, Registered_Device, Category, Caller_Categories
+from api.models import Caller, Registered_Device, Category
 from rest_framework import serializers
 
 class UserSerializer (serializers.HyperlinkedModelSerializer):
@@ -16,7 +16,7 @@ class CallerSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Caller
 		fields = ('callerId', 'country_code', 
-			'caller_number', 'registered_date', 'registered_by')
+			'caller_number', 'category', 'category.name', 'registered_date', 'registered_by')
 
 	def create(self, validated_data):
 		"""
@@ -32,5 +32,14 @@ class CallerSerializer(serializers.ModelSerializer):
 		instance.caller_number = validated_data.get('caller_number', instance.caller_number)
 		instance.save()
 		return instance
+
+# class CategorySerializer(serializers.ModelSerializer):
+# 	class Meta:
+# 		model = Category
+# 		fields = ('name', 'category_type', 'created_date')
+
+# 	def create(self, validated_data):
+
+# 	def update(self, validated_data):
 
 
