@@ -16,7 +16,7 @@ class CallerSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Caller
 		fields = ('callerId', 'country_code', 
-			'caller_number', 'category', 'category.name', 'registered_date', 'registered_by')
+			'caller_number', 'category', 'registered_date', 'registered_by')
 
 	def create(self, validated_data):
 		"""
