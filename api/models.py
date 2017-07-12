@@ -16,7 +16,6 @@ class Registered_Device(models.Model):
 		(1, 'Active'),
 		(0, 'Inactive'),
 		)
-
 	deviceId = models.CharField(max_length=100, primary_key=True) #UUID or AID of device
 	devicePlatform = models.CharField(max_length=20, choices=PLATFORM)
 	owner = models.ForeignKey(User, null=True) ## App can be use with annonymous mode

@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
-from api.models import Caller, Category
-from api.serializers import CallerSerializer, CategorySerializer
+from api.models import Caller, Category, Registered_Device
+from api.serializers import CallerSerializer, CategorySerializer, Registered_DeviceSerializer
 from rest_framework import status
 from rest_framework.views import APIView
 from django.http import Http404
@@ -52,8 +52,48 @@ class CallerDetail(APIView):
 		caller.delete()
 		return Response(status=status.HTTP_204_NO_CONTENT)
 
+#### Category list view should be used while user assign category to caller
 class CategoryList(APIView):
 	def get(self, request, format=None):
 		categories = Category.objects.all()
 		serializer = CategorySerializer(categories, many=True)
 		return Response(serializer.data)
+
+
+#### Registered device need to get details only
+
+class Registered_DeviceDetail(APIView):
+	def get_device(self, deviceId):
+		try:
+			device = Registered_Device.objects.get(pk=deviceId)
+			return device
+		except Registered_Device.DoesNotExist:
+			raise Http404
+
+	def get(self, request, deviceId, format=None):
+		device = self.get_device(deviceId)
+		serializer = Registered_DeviceSerializer(device)
+		return Response(serializer.data)
+
+	def put(self, request, deviceId, format=None):
+		device = self.get_device(deviceId)
+		serializer = Registered_DeviceSerializer(device, request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data)
+		return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+	def delete(self, request, deviceId, format=None):
+		device = self.get_device(deviceId)
+		device.delete()
+		return Response(status = status.HTTP_204_NO_CONTENT)
+
+class Registered_DeviceList(APIView):
+	def post(self, request, format=None):
+		serializer = Registered_DeviceSerializer(data=request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data, status = status.HTTP_201_CREATED)
+		else:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
