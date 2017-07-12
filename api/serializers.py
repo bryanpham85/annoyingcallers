@@ -13,6 +13,8 @@ class GroupSerializer (serializers.HyperlinkedModelSerializer):
 		fields = ('url', 'name')
 
 class CallerSerializer(serializers.ModelSerializer):
+	category = serializers.StringRelatedField(many=True)
+
 	class Meta:
 		model = Caller
 		fields = ('callerId', 'country_code', 
