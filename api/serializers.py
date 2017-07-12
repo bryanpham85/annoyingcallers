@@ -12,29 +12,6 @@ class GroupSerializer (serializers.HyperlinkedModelSerializer):
 		model = Group
 		fields = ('url', 'name')
 
-#####Caller serializer
-class CallerSerializer(serializers.ModelSerializer):
-	category = serializers.StringRelatedField(many=True)
-
-	class Meta:
-		model = Caller
-		fields = ('callerId', 'country_code', 
-			'caller_number', 'category', 'registered_date', 'registered_device')
-
-	def create(self, validated_data):
-		"""
-		Create and return a caller with validated data
-		"""
-		return Caller.objects.create(**validated_data)
-
-	def update(self, instance, validated_data):
-		"""
-		Update and return existing caller with validated data
-		"""
-		instance.country_code = validated_data.get('country_code',instance.country_code)
-		instance.caller_number = validated_data.get('caller_number', instance.caller_number)
-		instance.save()
-		return instance
 
 
 ##Category Serializer - Just define for get because app will not create category
@@ -59,6 +36,34 @@ class Registered_DeviceSerializer(serializers.ModelSerializer):
 		instance.status = validated_data.get('status', instance.status)
 		instance.save()
 		return instance
+
+
+
+#####Caller serializer
+class CallerSerializer(serializers.ModelSerializer):
+	category = CategorySerializer(read_only=True, many=True)
+
+	class Meta:
+		model = Caller
+		fields = ('callerId', 'country_code', 
+			'caller_number', 'category', 'registered_date', 'registered_device')
+
+	def create(self, validated_data):
+		"""
+		Create and return a caller with validated data
+		"""
+		return Caller.objects.create(**validated_data)
+
+	def update(self, instance, validated_data):
+		"""
+		Update and return existing caller with validated data
+		"""
+		instance.country_code = validated_data.get('country_code',instance.country_code)
+		instance.caller_number = validated_data.get('caller_number', instance.caller_number)
+		instance.save()
+		return instance
+
+
 
 
 
