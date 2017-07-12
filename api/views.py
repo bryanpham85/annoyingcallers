@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
-from api.models import Caller
-from api.serializers import CallerSerializer
+from api.models import Caller, Category
+from api.serializers import CallerSerializer, CategorySerializer
 from rest_framework import status
 from rest_framework.views import APIView
 from django.http import Http404
@@ -51,3 +51,9 @@ class CallerDetail(APIView):
 		caller = self.get_object(pk)
 		caller.delete()
 		return Response(status=status.HTTP_204_NO_CONTENT)
+
+class CategoryList(APIView):
+	def get(self, request, format=None):
+		categories = Category.objects.all()
+		serializer = CategorySerializer(categories, many=True)
+		return Response(serializer.data)

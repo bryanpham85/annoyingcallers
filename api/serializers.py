@@ -33,13 +33,9 @@ class CallerSerializer(serializers.ModelSerializer):
 		instance.save()
 		return instance
 
-# class CategorySerializer(serializers.ModelSerializer):
-# 	class Meta:
-# 		model = Category
-# 		fields = ('name', 'category_type', 'created_date')
-
-# 	def create(self, validated_data):
-
-# 	def update(self, validated_data):
+class CategorySerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Category
+		fields = ('name', 'category_type', 'created_date')
 
 

@@ -11,14 +11,25 @@ class Registered_Device(models.Model):
 		('iOS', 'iOS'),
 		('Blackberry', 'Blackberry'),
 	)
+
+	STATUS = (
+		(1, 'Active'),
+		(0, 'Inactive'),
+		)
+
 	deviceId = models.CharField(max_length=100, primary_key=True) #UUID or AID of device
 	devicePlatform = models.CharField(max_length=20, choices=PLATFORM)
 	owner = models.ForeignKey(User, null=True) ## App can be use with annonymous mode
+	status = models.IntegerField(null=False, default=1, choices=STATUS) #0 deactive, 1 active
 	installed_date = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
 		db_table = ('ac_registered_device')
 		ordering = ('installed_date',)
+
+
+	def __str__(self):
+		return self.deviceId
 
 
 class Category(models.Model):
@@ -37,6 +48,9 @@ class Category(models.Model):
 		db_table = ('ac_category')
 		ordering = ('created_date',)
 
+	def __str__(self):
+		return self.name
+
 
 
 class Caller(models.Model):
@@ -51,7 +65,7 @@ class Caller(models.Model):
 	country_code = models.CharField(max_length=5, choices=COUNTRY_CODE, null=False)
 	caller_number = models.CharField(max_length = 11, null=False)
 	registered_date = models.DateTimeField(auto_now_add=True)
-	registered_by = models.ForeignKey('Registered_Device')
+	registered_device = models.ForeignKey('Registered_Device')
 	category = models.ManyToManyField(Category)
 
 	class Meta:
@@ -64,20 +78,3 @@ class Caller(models.Model):
 	def __str__(self):
 		return str(self.callerId) + str(self.caller_number)
 
-
-
-
-
-# class Caller_Categories(models.Model):
-# 	"""
-# 	The caller marked into category by owner from device, this table only count the number of report time from community
-# 	"""
-# 	callerId = models.ForeignKey('Caller', null=False)
-# 	categoryId = models.ForeignKey('Category', null=False)
-# 	total_report_count = models.IntegerField(default=0)
-# 	positive_sentiment_count = models.IntegerField(default=0)
-# 	negative_sentiment_count = models.IntegerField(default=0)
-
-# 	class Meta:
-# 		db_table = ('ac_caller_category')
-# 		index_together = ['callerId', 'categoryId']
