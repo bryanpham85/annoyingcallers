@@ -12,8 +12,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class CallerAdmin(admin.ModelAdmin):
 	list_display = ('callerId', 'country_code', 'caller_number', 
 		'categories', 'registered_date', 'registered_device')
-	fields = ('country_code', 'caller_number', 
-		'category', 'registered_device')
+	fields = ('country_code', 'caller_number', 'registered_device')
 	# inlines = [CategoryInline,]
 
 	def categories(self, obj):

@@ -64,8 +64,8 @@ class Caller(models.Model):
 	country_code = models.CharField(max_length=5, choices=COUNTRY_CODE, null=False)
 	caller_number = models.CharField(max_length = 11, null=False)
 	registered_date = models.DateTimeField(auto_now_add=True)
-	registered_device = models.ForeignKey('Registered_Device')
-	category = models.ManyToManyField(Category)
+	registered_device = models.ForeignKey(Registered_Device)
+	category = models.ManyToManyField(Category, through='Caller_Category')
 
 	class Meta:
 		db_table = ('ac_caller')
@@ -77,3 +77,9 @@ class Caller(models.Model):
 	def __str__(self):
 		return str(self.callerId) + str(self.caller_number)
 
+class Caller_Category(models.Model):
+	caller = models.ForeignKey(Caller, on_delete=models.CASCADE)
+	category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+	class Meta:
+		db_table = ('ac_caller_categories')
