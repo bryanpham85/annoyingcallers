@@ -39,6 +39,7 @@ class Category(models.Model):
 			(1, 'Private'),
 			(2, 'Global'),
 		)
+	id = models.AutoField(primary_key=True)
 	name = models.CharField(max_length=100, null=False, unique=True)
 	category_type = models.IntegerField(null=False, choices=CATEGORY_TYPE)
 	created_date = models.DateTimeField(auto_now_add=True)

@@ -18,7 +18,7 @@ class GroupSerializer (serializers.HyperlinkedModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Category
-		fields = ('name', 'category_type', 'created_date')
+		fields = ('id', 'name', 'category_type', 'created_date')
 
 #Registered_Device added when app install
 ### owner can be null in case of annonymous
