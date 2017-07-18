@@ -18,9 +18,15 @@ class CallerList(APIView):
 
 
 	def post(self, request, format=None):
+		if request.data.get('category') is None or len(request.data.get('category')) <=0:
+			return Response('Error', status=status.HTTP_400_BAD_REQUEST)
 		serializer = CallerSerializer(data=request.data)
 		if serializer.is_valid():
 			serializer.save()
+			caller = Caller.objects.get(pk=serializer.data.get('callerId'))
+			category = Category.objects.get(pk=request.data.get('category')[0]['id'])
+			caller.category.add(category)
+			serializer = CallerSerializer(caller)
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -41,6 +47,7 @@ class CallerDetail(APIView):
 
 	def put(self, request, pk, format=None):
 		caller = self.get_object(pk)
+		Category.objects.get(1)
 		serializer = CallerSerializer(caller, request.data)
 		if serializer.is_valid():
 			serializer.save()
