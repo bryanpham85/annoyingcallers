@@ -52,6 +52,9 @@ class CallerSerializer(serializers.ModelSerializer):
 		"""
 		Create and return a caller with validated data
 		"""
+		if validated_data['caller_number'].startswith('0'):
+			validated_data['caller_number'] = validated_data['caller_number'][1:]
+
 		return Caller.objects.create(**validated_data)
 
 	def update(self, instance, validated_data):
@@ -62,6 +65,8 @@ class CallerSerializer(serializers.ModelSerializer):
 		instance.caller_number = validated_data.get('caller_number', instance.caller_number)
 		instance.save()
 		return instance
+
+
 
 
 

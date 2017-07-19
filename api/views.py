@@ -18,17 +18,66 @@ class CallerList(APIView):
 
 
 	def post(self, request, format=None):
-		if request.data.get('category') is None or len(request.data.get('category')) <=0:
-			return Response('Error', status=status.HTTP_400_BAD_REQUEST)
-		serializer = CallerSerializer(data=request.data)
+		if isinstance(request.data, list):
+			check = self.validateCallers(request.data)
+			if isinstance(check, Response):
+				return check
+			for index in range(len(request.data)):
+				item = request.data[index]
+				ret = self.saveItem(item)
+				if isinstance(ret, Response):
+					return ret
+			callers = Caller.objects.all()
+			serializer = CallerSerializer(callers, many=True)
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		else:
+			check = self.validatecaller(request.data)
+			if isinstance(check, Response):
+				return check
+			serializer = self.saveItem(request.data)
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+	def saveItem(self, item):
+		serializer = CallerSerializer(data=item)
 		if serializer.is_valid():
 			serializer.save()
 			caller = Caller.objects.get(pk=serializer.data.get('callerId'))
-			category = Category.objects.get(pk=request.data.get('category')[0]['id'])
+			category = Category.objects.get(pk=item.get('category')[0]['id'])
 			caller.category.add(category)
 			serializer = CallerSerializer(caller)
-			return Response(serializer.data, status=status.HTTP_201_CREATED)
+			return serializer
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	def validateCallers(self, callers):
+		for index in range(len(callers)):
+			caller = callers[index]
+			check = self.validateCaller(caller)
+			if isinstance(check, Response):
+				return check
+
+	def validateCaller(self, caller):
+		if caller.get('category') is None or len(caller.get('category')) <= 0 or caller.get('category')[0].get('id') is None:
+			return Response('Category Id should be provied', status=status.HTTP_400_BAD_REQUEST)
+		if Category.objects.filter(id=caller.get('category')[0].get('id')).exists() is False:
+			return Response('Category Id not found', status=status.HTTP_404_NOT_FOUND)
+
+		if caller.get('callerId') is not None:
+			return Response('callerId should be null for Post Request', status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+		if caller.get('caller_number') is None:
+			return Response('Caller Number should be provied', status=status.HTTP_400_BAD_REQUEST)
+
+		if caller.get('country_code') is None:
+			return Response('Country Code should be provied', status=status.HTTP_400_BAD_REQUEST)
+
+		if caller.get('registered_device') is None:
+			return Response('Registered Device should be provied', status=status.HTTP_400_BAD_REQUEST)
+
+		if Caller.objects.filter(caller_number=caller.get('caller_number')).exists():
+			callers = Caller.objects.filter(caller_number=caller.get('caller_number'))
+			for index in range(len(callers)):
+				exist = callers[index]
+				if exist.category.filter(id=caller.get('category')[0].get('id')).exists():
+					return Response('Caller Number exists', status=status.HTTP_400_BAD_REQUEST)
 
 
 class CallerDetail(APIView):
