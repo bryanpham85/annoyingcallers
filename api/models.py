@@ -58,8 +58,8 @@ class Caller(models.Model):
 	Description: a phone number is a caller at global of app
 	"""
 	COUNTRY_CODE = (
-		('+84', 'VN(+84)'),
-		('+1', 'US(+1)'),
+		('VN', 'VN(+84)'),
+		('US', 'US(+1)'),
 	)
 	callerId = models.AutoField(primary_key=True)
 	country_code = models.CharField(max_length=5, choices=COUNTRY_CODE, null=False)

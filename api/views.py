@@ -19,22 +19,28 @@ class CallerList(APIView):
 
 	def post(self, request, format=None):
 		if isinstance(request.data, list):
-			check = self.validateCallers(request.data)
-			if isinstance(check, Response):
-				return check
+
 			for index in range(len(request.data)):
 				item = request.data[index]
+				check = self.validateCaller(item)
+				if isinstance(check, Response):
+					continue #### Ignore this item if validate failed
+
 				ret = self.saveItem(item)
 				if isinstance(ret, Response):
-					return ret
+					continue
 			callers = Caller.objects.all()
 			serializer = CallerSerializer(callers, many=True)
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		else:
-			check = self.validatecaller(request.data)
+			check = self.validateCaller(request.data)
 			if isinstance(check, Response):
 				return check
-			serializer = self.saveItem(request.data)
+			ret = self.saveItem(request.data)
+			if isinstance(ret, Response):
+				return ret
+			callers = Caller.objects.all()
+			serializer = CallerSerializer(callers, many=True)
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 	def saveItem(self, item):
@@ -47,12 +53,7 @@ class CallerList(APIView):
 			serializer = CallerSerializer(caller)
 			return serializer
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-	def validateCallers(self, callers):
-		for index in range(len(callers)):
-			caller = callers[index]
-			check = self.validateCaller(caller)
-			if isinstance(check, Response):
-				return check
+
 
 	def validateCaller(self, caller):
 		if caller.get('category') is None or len(caller.get('category')) <= 0 or caller.get('category')[0].get('id') is None:

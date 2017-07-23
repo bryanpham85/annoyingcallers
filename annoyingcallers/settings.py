@@ -25,7 +25,7 @@ SECRET_KEY = 'ty%wks+nv$sw%9xuhm0r0+5k0(&0+@s-gkkuez*2s=bxt(wk%b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 INTERNAL_IPS = ('127.0.0.1',)
 
