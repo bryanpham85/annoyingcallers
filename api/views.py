@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
-from api.models import Caller, Category, Registered_Device
-from api.serializers import CallerSerializer, CategorySerializer, Registered_DeviceSerializer
+from api.models import Caller, Category, Device
+from api.serializers import CallerSerializer, CategorySerializer, DeviceSerializer
 from rest_framework import status
 from rest_framework.views import APIView
 from django.http import Http404
@@ -70,7 +70,7 @@ class CallerList(APIView):
 		if caller.get('country_code') is None:
 			return Response('Country Code should be provied', status=status.HTTP_400_BAD_REQUEST)
 
-		if caller.get('registered_device') is None:
+		if caller.get('registered_by_device') is None:
 			return Response('Registered Device should be provied', status=status.HTTP_400_BAD_REQUEST)
 
 		if Caller.objects.filter(caller_number=caller.get('caller_number')).exists():
@@ -119,22 +119,22 @@ class CategoryList(APIView):
 
 #### Registered device need to get details only
 
-class Registered_DeviceDetail(APIView):
+class DeviceDetail(APIView):
 	def get_device(self, deviceId):
 		try:
-			device = Registered_Device.objects.get(pk=deviceId)
+			device = Device.objects.get(pk=deviceId)
 			return device
-		except Registered_Device.DoesNotExist:
+		except Device.DoesNotExist:
 			raise Http404
 
 	def get(self, request, deviceId, format=None):
 		device = self.get_device(deviceId)
-		serializer = Registered_DeviceSerializer(device)
+		serializer = DeviceSerializer(device)
 		return Response(serializer.data)
 
 	def put(self, request, deviceId, format=None):
 		device = self.get_device(deviceId)
-		serializer = Registered_DeviceSerializer(device, request.data)
+		serializer = DeviceSerializer(device, request.data)
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data)
@@ -145,9 +145,9 @@ class Registered_DeviceDetail(APIView):
 		device.delete()
 		return Response(status = status.HTTP_204_NO_CONTENT)
 
-class Registered_DeviceList(APIView):
+class DeviceList(APIView):
 	def post(self, request, format=None):
-		serializer = Registered_DeviceSerializer(data=request.data)
+		serializer = DeviceSerializer(data=request.data)
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data, status = status.HTTP_201_CREATED)

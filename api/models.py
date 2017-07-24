@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-class Registered_Device(models.Model):
+class Device(models.Model):
 	"""
 	Devices install AnnoyingCaller app
 	"""
@@ -23,7 +23,7 @@ class Registered_Device(models.Model):
 	installed_date = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
-		db_table = ('ac_registered_device')
+		db_table = ('ac_device')
 		ordering = ('installed_date',)
 
 
@@ -35,13 +35,9 @@ class Category(models.Model):
 	"""
 	Global used cross platform
 	"""
-	CATEGORY_TYPE = (
-			(1, 'Private'),
-			(2, 'Global'),
-		)
 	id = models.AutoField(primary_key=True)
 	name = models.CharField(max_length=100, null=False, unique=True)
-	category_type = models.IntegerField(null=False, choices=CATEGORY_TYPE)
+	description = models.CharField(max_length=255, null=True)
 	created_date = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
@@ -65,8 +61,8 @@ class Caller(models.Model):
 	country_code = models.CharField(max_length=5, choices=COUNTRY_CODE, null=False)
 	caller_number = models.CharField(max_length = 11, null=False)
 	registered_date = models.DateTimeField(auto_now_add=True)
-	registered_device = models.ForeignKey('Registered_Device')
-	category = models.ManyToManyField(Category)
+	registered_by_device = models.ForeignKey('Device')
+	category = models.ManyToManyField(Category, through="Caller_Category")
 
 	class Meta:
 		db_table = ('ac_caller')
@@ -77,4 +73,21 @@ class Caller(models.Model):
 
 	def __str__(self):
 		return str(self.callerId) + str(self.caller_number)
+
+class Caller_Category(models.Model):
+	# to defferentiate betwen global and private category assignment
+	ASSIGN_TYPE = (
+			(1, 'Private'),
+			(2, 'Global'),
+		)
+	caller_id = models.ForeignKey(Caller, on_delete=models.CASCADE)
+	category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
+	assign_type = models.IntegerField(null=False, choices=ASSIGN_TYPE)
+	assigned_date = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		db_table=('ac_caller_category')
+		indexes = [
+			models.Index(fields=['caller_id', 'category_id'], name='caller_category_index')
+		]
 
