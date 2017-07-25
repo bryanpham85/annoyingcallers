@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User, Group
-from api.models import Caller, Device, Category
+from .models import Caller, Device, Category, Caller_Category
 from rest_framework import serializers
 ##This is for global auth
 class UserSerializer (serializers.HyperlinkedModelSerializer):
@@ -18,9 +18,9 @@ class GroupSerializer (serializers.HyperlinkedModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Category
-		fields = ('id', 'name', 'category_type', 'created_date')
+		fields = ('id', 'name', 'description', 'created_date')
 
-#Registered_Device added when app install
+#Device added when app install
 ### owner can be null in case of annonymous
 class DeviceSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -42,6 +42,8 @@ class DeviceSerializer(serializers.ModelSerializer):
 #####Caller serializer
 class CallerSerializer(serializers.ModelSerializer):
 	category = CategorySerializer(read_only=True, many=True)
+
+
 
 	class Meta:
 		model = Caller

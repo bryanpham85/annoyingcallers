@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'debug_toolbar',
     'rest_framework',
-    'api',#Need to check the relationship with annoyingcallers project
+    'api',
 ]
 
 MIDDLEWARE = [

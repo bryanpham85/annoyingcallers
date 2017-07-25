@@ -1,5 +1,9 @@
 from django.contrib import admin
-from api.models import Caller, Category, Device, Caller_Category
+# from api.models.device import Device
+# from api.models.category import Category
+# from api.models.caller import Caller
+# from api.models.caller_category import Caller_Category 
+from .models import *
 
 class DeviceAdmin(admin.ModelAdmin):
 	list_display = ('deviceId', 'devicePlatform', 'status', 'installed_date')
