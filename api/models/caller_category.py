@@ -20,3 +20,4 @@ class Caller_Category(models.Model):
 		]
 
 		app_label = 'api'
+		auto_created = True
