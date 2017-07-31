@@ -7,6 +7,10 @@ from rest_framework import status
 from rest_framework.views import APIView
 from django.http import Http404
 from rest_framework.response import Response
+import logging
+
+###Define logger
+callerViewLogger = logging.getLogger(__name__)
 
 
 class CallerList(APIView):
@@ -56,6 +60,7 @@ class CallerList(APIView):
 					category_id = temp_category, assign_type = category['assign_type'])
 			serializer = CallerSerializer(caller)
 			return serializer
+		callerViewLogger.info("Bad request with invalid data %s", item)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
