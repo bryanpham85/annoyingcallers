@@ -32,7 +32,7 @@ class Caller_CategorySerializer(serializers.ModelSerializer):
 class DeviceSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Device
-		fields = ('deviceId', 'devicePlatform', 'owner', 'status')
+		fields = ('deviceId', 'devicePlatform', 'owner', 'status', 'api_request_key')
 
 	def create(self, validated_data):
 		return Device.objects.create(**validated_data)

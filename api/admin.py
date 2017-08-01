@@ -6,8 +6,8 @@ from django.contrib import admin
 from .models import *
 
 class DeviceAdmin(admin.ModelAdmin):
-	list_display = ('deviceId', 'devicePlatform', 'status', 'installed_date')
-	fields = ('deviceId', 'devicePlatform', 'status')
+	list_display = ('deviceId', 'devicePlatform', 'status', 'api_request_key', 'installed_date')
+	fields = ('deviceId', 'devicePlatform', 'api_request_key', 'status')
 
 class CategoryAdmin(admin.ModelAdmin):
 	list_display = ('id', 'name', 'description', 'created_date')

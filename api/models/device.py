@@ -19,6 +19,7 @@ class Device(models.Model):
 	devicePlatform = models.CharField(max_length=20, choices=PLATFORM)
 	owner = models.ForeignKey(User, null=True) ## App can be use with annonymous mode
 	status = models.IntegerField(null=False, default=1, choices=STATUS) #0 deactive, 1 active
+	api_request_key = models.CharField(max_length=255, null=False)
 	installed_date = models.DateTimeField(auto_now_add=True)
 
 	class Meta:

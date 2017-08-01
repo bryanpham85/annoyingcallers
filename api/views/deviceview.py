@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from django.http import Http404
 from rest_framework.response import Response
+from api.utils import CallerAuthUtils
 
 class DeviceDetail(APIView):
 	def get_device(self, deviceId):
@@ -36,6 +37,11 @@ class DeviceDetail(APIView):
 
 class DeviceList(APIView):
 	def post(self, request, format=None):
+		print("I'm Here %s", request.data)
+		#get the deviceId and generate api_request_key then assign back to request for serializer
+		api_request_key = CallerAuthUtils.apiRequestKeyGenerator(request.data['deviceId'].encode('utf'))
+		request.data['api_request_key'] = api_request_key
+		print("API key after encoded %s", request.data['api_request_key'] )
 		serializer = DeviceSerializer(data=request.data)
 		if serializer.is_valid():
 			serializer.save()

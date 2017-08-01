@@ -8,12 +8,14 @@ from rest_framework.views import APIView
 from django.http import Http404
 from rest_framework.response import Response
 import logging
+from api.utils import APIKeyValidator
 
 ###Define logger
 callerViewLogger = logging.getLogger(__name__)
 
 
 class CallerList(APIView):
+	permission_classes = (APIKeyValidator,)
 
 	def get(self, request, format=None):
 		callers = Caller.objects.all()

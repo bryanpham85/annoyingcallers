@@ -7,9 +7,12 @@ from rest_framework import status
 from rest_framework.views import APIView
 from django.http import Http404
 from rest_framework.response import Response
+from api.utils import APIKeyValidator
 
 #### Category list view should be used while user assign category to caller
 class CategoryList(APIView):
+	permission_classes = (APIKeyValidator,)
+	
 	def get(self, request, format=None):
 		categories = Category.objects.all()
 		serializer = CategorySerializer(categories, many=True)
