@@ -29,7 +29,7 @@ class Caller(models.Model):
 		app_label = 'api'
 
 	def __str__(self):
-		return str(self.callerId) + str(self.number)
+		return str(self.id) + str(self.number)
 
 	def clean(self):
 		if self.number is None or self.number== '':

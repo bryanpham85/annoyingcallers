@@ -21,12 +21,12 @@ class CategorySerializer(serializers.ModelSerializer):
 		fields = ('id', 'name', 'description', 'created_date')
 
 class Caller_CategorySerializer(serializers.ModelSerializer):
-	category_id = serializers.ReadOnlyField(source='category_id.id')
-	category_name = serializers.ReadOnlyField(source='category_id.name')
+	id = serializers.ReadOnlyField(source='category.id')
+	name = serializers.ReadOnlyField(source='category.name')
 
 	class Meta:
 		model = Caller_Category
-		fields = ('category_id', 'category_name', 'assign_type', 'assigned_date')
+		fields = ('id', 'name', 'assign_type', 'assigned_date')
 #Device added when app install
 ### owner can be null in case of annonymous
 class DeviceSerializer(serializers.ModelSerializer):

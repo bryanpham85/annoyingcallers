@@ -25,6 +25,7 @@ class CallerList(APIView):
 
 	def post(self, request, format=None):
 		if isinstance(request.data, list):
+			print("I'm in loop create multiple caller")
 
 			for index in range(len(request.data)):
 				item = request.data[index]
@@ -39,6 +40,7 @@ class CallerList(APIView):
 			serializer = CallerSerializer(callers, many=True)
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		else:
+			print("I'm in loop create single caller")
 			check = self.validateCaller(request.data)
 			if isinstance(check, Response):
 				return check
@@ -58,8 +60,8 @@ class CallerList(APIView):
 			#Save caller_category to intermediate table
 			for category in item.get('category'):
 				temp_category = Category.objects.get(pk=category['id'])
-				caller_category = Caller_Category.objects.create(caller_id = caller, 
-					category_id = temp_category, assign_type = category['assign_type'])
+				caller_category = Caller_Category.objects.create(caller = caller, 
+					category = temp_category, assign_type = category['assign_type'])
 			serializer = CallerSerializer(caller)
 			return serializer
 		callerViewLogger.info("Bad request with invalid data %s", item)
