@@ -39,7 +39,7 @@ class DeviceList(APIView):
 	def post(self, request, format=None):
 		print("I'm Here %s", request.data)
 		#get the deviceId and generate api_request_key then assign back to request for serializer
-		api_request_key = CallerAuthUtils.apiRequestKeyGenerator(request.data['deviceId'].encode('utf'))
+		api_request_key = CallerAuthUtils.apiRequestKeyGenerator(request.data['id'].encode('utf'))
 		request.data['api_request_key'] = api_request_key
 		print("API key after encoded %s", request.data['api_request_key'] )
 		serializer = DeviceSerializer(data=request.data)

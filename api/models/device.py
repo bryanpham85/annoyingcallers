@@ -15,8 +15,8 @@ class Device(models.Model):
 		(1, 'Active'),
 		(0, 'Inactive'),
 		)
-	deviceId = models.CharField(max_length=100, primary_key=True) #UUID or AID of device
-	devicePlatform = models.CharField(max_length=20, choices=PLATFORM)
+	id = models.CharField(max_length=100, primary_key=True) #UUID or AID of device
+	platform = models.CharField(max_length=20, choices=PLATFORM)
 	owner = models.ForeignKey(User, null=True) ## App can be use with annonymous mode
 	status = models.IntegerField(null=False, default=1, choices=STATUS) #0 deactive, 1 active
 	api_request_key = models.CharField(max_length=255, null=False)
@@ -29,4 +29,4 @@ class Device(models.Model):
 
 
 	def __str__(self):
-		return self.deviceId
+		return self.id

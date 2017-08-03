@@ -32,7 +32,7 @@ class Caller_CategorySerializer(serializers.ModelSerializer):
 class DeviceSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Device
-		fields = ('deviceId', 'devicePlatform', 'owner', 'status', 'api_request_key')
+		fields = ('id', 'platform', 'owner', 'status', 'api_request_key')
 
 	def create(self, validated_data):
 		return Device.objects.create(**validated_data)
@@ -54,15 +54,15 @@ class CallerSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Caller
-		fields = ('callerId', 'country_code', 
-			'caller_number', 'category', 'registered_date', 'registered_by_device')
+		fields = ('id', 'country_code', 
+			'number', 'category', 'registered_date', 'registered_by_device')
 
 	def create(self, validated_data):
 		"""
 		Create and return a caller with validated data
 		"""
-		if validated_data['caller_number'].startswith('0'):
-			validated_data['caller_number'] = validated_data['caller_number'][1:]
+		if validated_data['number'].startswith('0'):
+			validated_data['number'] = validated_data['number'][1:]
 
 		return Caller.objects.create(**validated_data)
 
@@ -71,7 +71,7 @@ class CallerSerializer(serializers.ModelSerializer):
 		Update and return existing caller with validated data
 		"""
 		instance.country_code = validated_data.get('country_code',instance.country_code)
-		instance.caller_number = validated_data.get('caller_number', instance.caller_number)
+		instance.number = validated_data.get('number', instance.number)
 		instance.save()
 		return instance
 

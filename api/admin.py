@@ -6,8 +6,8 @@ from django.contrib import admin
 from .models import *
 
 class DeviceAdmin(admin.ModelAdmin):
-	list_display = ('deviceId', 'devicePlatform', 'status', 'api_request_key', 'installed_date')
-	fields = ('deviceId', 'devicePlatform', 'api_request_key', 'status')
+	list_display = ('id', 'platform', 'status', 'api_request_key', 'installed_date')
+	fields = ('id', 'platform', 'api_request_key', 'status')
 
 class CategoryAdmin(admin.ModelAdmin):
 	list_display = ('id', 'name', 'description', 'created_date')
@@ -17,8 +17,8 @@ class Caller_CategoryInline(admin.TabularInline):
 	model = Caller_Category
 
 class CallerAdmin(admin.ModelAdmin):
-	list_display = ('callerId', 'country_code', 'caller_number', 'registered_date', 'registered_by_device')
-	fields = ('country_code', 'caller_number', 'registered_by_device')
+	list_display = ('id', 'country_code', 'number', 'registered_date', 'registered_by_device')
+	fields = ('country_code', 'number', 'registered_by_device')
 	inlines = (Caller_CategoryInline,)
 
 
@@ -28,7 +28,7 @@ class CallerAdmin(admin.ModelAdmin):
 
 	categories.short_description = "Category"
 	def registered_device(self, obj):
-		return '\n'.join(obj.registered_by_device.deviceId)
+		return '\n'.join(obj.registered_by_device.id)
 	registered_device.short_description = "DeviceId"
 
 admin.site.register(Device, DeviceAdmin)

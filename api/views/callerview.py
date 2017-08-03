@@ -53,7 +53,7 @@ class CallerList(APIView):
 		serializer = CallerSerializer(data=item)
 		if serializer.is_valid():
 			serializer.save()
-			caller = Caller.objects.get(pk=serializer.data.get('callerId'))
+			caller = Caller.objects.get(pk=serializer.data.get('id'))
 
 			#Save caller_category to intermediate table
 			for category in item.get('category'):

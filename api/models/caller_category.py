@@ -8,8 +8,8 @@ class Caller_Category(models.Model):
 			(1, 'Private'),
 			(2, 'Global'),
 		)
-	caller_id = models.ForeignKey(Caller, on_delete=models.CASCADE)
-	category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
+	caller = models.ForeignKey(Caller, on_delete=models.CASCADE)
+	category = models.ForeignKey(Category, on_delete=models.CASCADE)
 	assign_type = models.IntegerField(null=False, choices=ASSIGN_TYPE)
 	assigned_date = models.DateTimeField(auto_now_add=True)
 
