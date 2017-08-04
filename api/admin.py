@@ -1,9 +1,6 @@
 from django.contrib import admin
-# from api.models.device import Device
-# from api.models.category import Category
-# from api.models.caller import Caller
-# from api.models.caller_category import Caller_Category 
 from .models import *
+
 
 class DeviceAdmin(admin.ModelAdmin):
 	list_display = ('id', 'platform', 'status', 'api_request_key', 'installed_date')
@@ -13,13 +10,13 @@ class CategoryAdmin(admin.ModelAdmin):
 	list_display = ('id', 'name', 'description', 'created_date')
 	fields = ('name', 'description')
 
-class Caller_CategoryInline(admin.TabularInline):
-	model = Caller_Category
+class CallerCategoryInline(admin.TabularInline):
+	model = CallerCategory
 
 class CallerAdmin(admin.ModelAdmin):
 	list_display = ('id', 'country_code', 'number', 'registered_date', 'registered_by_device')
 	fields = ('country_code', 'number', 'registered_by_device')
-	inlines = (Caller_CategoryInline,)
+	inlines = (CallerCategoryInline,)
 
 
 

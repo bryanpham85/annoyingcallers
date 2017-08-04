@@ -11,7 +11,7 @@ class Category(models.Model):
 	created_date = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
-		db_table = ('ac_category')
+		db_table = 'ac_category'
 		ordering = ('created_date',)
 		app_label = 'api'
 

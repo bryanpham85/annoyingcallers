@@ -2,7 +2,7 @@ from django.db import models
 from .category import Category
 from .caller import Caller
 
-class Caller_Category(models.Model):
+class CallerCategory(models.Model):
 	# to defferentiate betwen global and private category assignment
 	ASSIGN_TYPE = (
 			(1, 'Private'),
@@ -14,10 +14,9 @@ class Caller_Category(models.Model):
 	assigned_date = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
-		db_table=('ac_caller_category')
+		db_table='ac_caller_category'
 		indexes = [
 			models.Index(fields=['caller_id', 'category_id'], name='caller_category_index')
 		]
 
 		app_label = 'api'
-		auto_created = True

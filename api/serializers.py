@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User, Group
-from .models import Caller, Device, Category, Caller_Category
+from .models import Caller, Device, Category, CallerCategory
 from rest_framework import serializers
+from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
+
 ##This is for global auth
 class UserSerializer (serializers.HyperlinkedModelSerializer):
 	class Meta:
@@ -20,12 +22,12 @@ class CategorySerializer(serializers.ModelSerializer):
 		model = Category
 		fields = ('id', 'name', 'description', 'created_date')
 
-class Caller_CategorySerializer(serializers.ModelSerializer):
+class CallerCategorySerializer(serializers.ModelSerializer):
 	id = serializers.ReadOnlyField(source='category.id')
 	name = serializers.ReadOnlyField(source='category.name')
 
 	class Meta:
-		model = Caller_Category
+		model = CallerCategory
 		fields = ('id', 'name', 'assign_type', 'assigned_date')
 #Device added when app install
 ### owner can be null in case of annonymous
@@ -35,12 +37,20 @@ class DeviceSerializer(serializers.ModelSerializer):
 		fields = ('id', 'platform', 'owner', 'status', 'api_request_key')
 
 	def create(self, validated_data):
+		print("Ime in create devie")
 		return Device.objects.create(**validated_data)
 
 
 	def update(self, instance, validated_data):
 		instance.owner = validated_data.get('owner', instance.owner)
 		instance.status = validated_data.get('status', instance.status)
+		#Validate the date and throw exception in case of violated.
+		try:
+			print("Validate Duplication of DeviceID")
+			instance.full_clear()
+		except ValidationError as e:
+			non_field_errors = e.message_dict[NON_FIELD_ERRORS]
+			return non_field_errors
 		instance.save()
 		return instance
 
@@ -49,7 +59,7 @@ class DeviceSerializer(serializers.ModelSerializer):
 #####Caller serializer
 class CallerSerializer(serializers.ModelSerializer):
 	#category = CategorySerializer(read_only=True, many=True)
-	category = Caller_CategorySerializer(read_only=True, many='true', source='caller_category_set')
+	category = CallerCategorySerializer(read_only=True, many='true', source='caller_category_set')
 
 
 	class Meta:

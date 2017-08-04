@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
-from api.models import Caller, Category, Device, Caller_Category
+from api.models import Caller, Category, Device, CallerCategory
 from api.serializers import CallerSerializer, CategorySerializer, DeviceSerializer
 from rest_framework import status
 from rest_framework.views import APIView
@@ -60,8 +60,8 @@ class CallerList(APIView):
 			#Save caller_category to intermediate table
 			for category in item.get('category'):
 				temp_category = Category.objects.get(pk=category['id'])
-				caller_category = Caller_Category.objects.create(caller = caller, 
-					category = temp_category, assign_type = category['assign_type'])
+				caller_category = CallerCategory.objects.create(caller = caller,
+                                                                category = temp_category, assign_type = category['assign_type'])
 			serializer = CallerSerializer(caller)
 			return serializer
 		callerViewLogger.info("Bad request with invalid data %s", item)

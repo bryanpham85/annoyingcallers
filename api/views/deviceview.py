@@ -37,14 +37,19 @@ class DeviceDetail(APIView):
 
 class DeviceList(APIView):
 	def post(self, request, format=None):
-		print("I'm Here %s", request.data)
+		print("I'm Here in Device Create %s", request.data)
 		#get the deviceId and generate api_request_key then assign back to request for serializer
+		if 'id' not in request.data:
+			return Response("Device id cannot be empty", status.HTTP_400_BAD_REQUEST)
+
 		api_request_key = CallerAuthUtils.apiRequestKeyGenerator(request.data['id'].encode('utf'))
 		request.data['api_request_key'] = api_request_key
-		print("API key after encoded %s", request.data['api_request_key'] )
+
 		serializer = DeviceSerializer(data=request.data)
 		if serializer.is_valid():
+			print("I'm saving Device now")
 			serializer.save()
 			return Response(serializer.data, status = status.HTTP_201_CREATED)
 		else:
+			print("I'm in Device with validation error")
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
