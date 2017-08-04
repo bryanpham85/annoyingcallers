@@ -59,7 +59,7 @@ class DeviceSerializer(serializers.ModelSerializer):
 #####Caller serializer
 class CallerSerializer(serializers.ModelSerializer):
 	#category = CategorySerializer(read_only=True, many=True)
-	category = CallerCategorySerializer(read_only=True, many='true', source='caller_category_set')
+	category = CallerCategorySerializer(read_only=True, many='true', source='callercategory_set')
 
 
 	class Meta:

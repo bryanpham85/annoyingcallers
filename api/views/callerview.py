@@ -70,29 +70,29 @@ class CallerList(APIView):
 
 	def validateCaller(self, caller):
 		return True
-		# if caller.get('category') is None or len(caller.get('category')) <= 0 or caller.get('category')[0].get('id') is None:
-		# 	return Response('Category Id should be provied', status=status.HTTP_400_BAD_REQUEST)
-		# if Category.objects.filter(id=caller.get('category')[0].get('id')).exists() is False:
-		# 	return Response('Category Id not found', status=status.HTTP_404_NOT_FOUND)
+		if caller.get('category') is None or len(caller.get('category')) <= 0 or caller.get('category')[0].get('id') is None:
+			return Response('Category Id should be provied', status=status.HTTP_400_BAD_REQUEST)
+		if Category.objects.filter(id=caller.get('category')[0].get('id')).exists() is False:
+			return Response('Category Id not found', status=status.HTTP_404_NOT_FOUND)
 
-		# if caller.get('callerId') is not None:
-		# 	return Response('callerId should be null for Post Request', status=status.HTTP_405_METHOD_NOT_ALLOWED)
+		if caller.get('callerId') is not None:
+			return Response('callerId should be null for Post Request', status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-		# if caller.get('caller_number') is None:
-		# 	return Response('Caller Number should be provied', status=status.HTTP_400_BAD_REQUEST)
+		if caller.get('caller_number') is None:
+			return Response('Caller Number should be provied', status=status.HTTP_400_BAD_REQUEST)
 
-		# if caller.get('country_code') is None:
-		# 	return Response('Country Code should be provied', status=status.HTTP_400_BAD_REQUEST)
+		if caller.get('country_code') is None:
+			return Response('Country Code should be provied', status=status.HTTP_400_BAD_REQUEST)
 
-		# if caller.get('registered_by_device') is None:
-		# 	return Response('Registered Device should be provied', status=status.HTTP_400_BAD_REQUEST)
+		if caller.get('registered_by_device') is None:
+			return Response('Registered Device should be provied', status=status.HTTP_400_BAD_REQUEST)
 
-		# if Caller.objects.filter(caller_number=caller.get('caller_number')).exists():
-		# 	callers = Caller.objects.filter(caller_number=caller.get('caller_number'))
-		# 	for index in range(len(callers)):
-		# 		exist = callers[index]
-		# 		if exist.category.filter(id=caller.get('category')[0].get('id')).exists():
-		# 			return Response('Caller Number exists', status=status.HTTP_400_BAD_REQUEST)
+		if Caller.objects.filter(caller_number=caller.get('caller_number')).exists():
+			callers = Caller.objects.filter(caller_number=caller.get('caller_number'))
+			for index in range(len(callers)):
+				exist = callers[index]
+				if exist.category.filter(id=caller.get('category')[0].get('id')).exists():
+					return Response('Caller Number exists', status=status.HTTP_400_BAD_REQUEST)
 class CallerDetail(APIView):
 
 	def get_object(self, pk):
