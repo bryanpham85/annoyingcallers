@@ -6,6 +6,7 @@ from django.http import Http404
 from rest_framework.response import Response
 import logging
 from api.utils import APIKeyValidator
+import re
 
 ###Define logger
 callerViewLogger = logging.getLogger(__name__)
@@ -68,6 +69,7 @@ class CallerList(APIView):
 	def validateCaller(self, caller):
 		if caller.get('category') is None or len(caller.get('category')) <= 0 or caller.get('category')[0].get('id') is None:
 			return Response('Category Id should be provied', status=status.HTTP_400_BAD_REQUEST)
+
 		if Category.objects.filter(id=caller.get('category')[0].get('id')).exists() is False:
 			return Response('Category Id not found', status=status.HTTP_404_NOT_FOUND)
 
@@ -76,6 +78,10 @@ class CallerList(APIView):
 
 		if caller.get('number') is None:
 			return Response('Caller Number should be provided', status=status.HTTP_400_BAD_REQUEST)
+
+		#check valid phone number
+		if re.fullmatch("^0[0-9]{9}", caller.get('number')) is None or re.fullmatch("^0[0-9]{9}", caller.get('number')) is None:
+			return Response("Number is not in good format")
 
 		if caller.get('country_code') is None:
 			return Response('Country Code should be provided', status=status.HTTP_400_BAD_REQUEST)
