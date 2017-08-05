@@ -80,7 +80,7 @@ class CallerList(APIView):
 			return Response('Caller Number should be provided', status=status.HTTP_400_BAD_REQUEST)
 
 		#check valid phone number
-		if re.fullmatch("^0[0-9]{9}", caller.get('number')) is None or re.fullmatch("^0[0-9]{9}", caller.get('number')) is None:
+		if re.fullmatch("(0|\+84)[1-9]{1}[0-9]{8}([0-9]{1})?", caller.get('number')) is None:
 			return Response("Number is not in good format")
 
 		if caller.get('country_code') is None:
@@ -90,11 +90,14 @@ class CallerList(APIView):
 			return Response('Registered Device should be provided', status=status.HTTP_400_BAD_REQUEST)
 
 		if Caller.objects.filter(number=caller.get('number')).exists():
+			print("AAAAAAAAA")
 			callers = Caller.objects.filter(number=caller.get('number'))
 			for index in range(len(callers)):
 				exist = callers[index]
-				if exist.category.filter(id=caller.get('category')[0].get('id')).exists():
-					return Response('Caller Number exists', status=status.HTTP_400_BAD_REQUEST)
+				for i in range(len(exist.category)):
+					print("HERERERERERE")
+					if exist.category.filter(id=caller.get('category')[i].get('id')).exists():
+						return Response('Caller Number exists', status=status.HTTP_400_BAD_REQUEST)
 class CallerDetail(APIView):
 
 	def get_object(self, pk):

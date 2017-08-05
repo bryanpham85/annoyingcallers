@@ -11,7 +11,7 @@ class Caller(models.Model):
 	)
 	id = models.AutoField(primary_key=True)
 	country_code = models.CharField(max_length=5, choices=COUNTRY_CODE, null=False)
-	number = models.CharField(max_length = 11, null=False)
+	number = models.CharField(max_length = 25, null=False)
 	registered_date = models.DateTimeField(auto_now_add=True)
 	registered_by_device = models.ForeignKey('Device')
 	category = models.ManyToManyField(Category, through="CallerCategory")
