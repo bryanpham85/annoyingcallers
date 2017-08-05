@@ -73,6 +73,8 @@ class CallerSerializer(serializers.ModelSerializer):
 		"""
 		if validated_data['number'].startswith('0'):
 			validated_data['number'] = validated_data['number'][1:]
+		if validated_data['number'].startswith('+84'):
+			validated_data['number'] = validated_data['number'][3:]
 
 		return Caller.objects.create(**validated_data)
 

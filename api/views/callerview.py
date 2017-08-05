@@ -88,15 +88,21 @@ class CallerList(APIView):
 
 		if caller.get('registered_by_device') is None:
 			return Response('Registered Device should be provided', status=status.HTTP_400_BAD_REQUEST)
-
-		if Caller.objects.filter(number=caller.get('number')).exists():
+		number = caller.get('number')
+		if number.startswith('0'):
+			number = number[1:]
+		if number.startswith('+84'):
+			number = number[3:]
+		if Caller.objects.filter(number=number).exists():
 			print("AAAAAAAAA")
-			callers = Caller.objects.filter(number=caller.get('number'))
-			for index in range(len(callers)):
-				exist = callers[index]
-				for i in range(len(exist.category)):
+			callers = Caller.objects.filter(number=number)
+			for callerindex in range(len(callers)):
+				exist = callers[callerindex]
+				for cateindex in range(len(caller.get('category'))):
 					print("HERERERERERE")
-					if exist.category.filter(id=caller.get('category')[i].get('id')).exists():
+					categories = Category.objects.filter(id=caller.get('category')[cateindex].get('id'))
+
+					if CallerCategory.objects.filter(caller = exist, category=categories[0]).exists():
 						return Response('Caller Number exists', status=status.HTTP_400_BAD_REQUEST)
 class CallerDetail(APIView):
 
