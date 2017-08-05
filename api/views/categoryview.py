@@ -1,11 +1,6 @@
-from django.shortcuts import render
-from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
-from api.models import Caller, Category, Device
-from api.serializers import CallerSerializer, CategorySerializer, DeviceSerializer
-from rest_framework import status
+from api.models import Category
+from api.serializers import CategorySerializer
 from rest_framework.views import APIView
-from django.http import Http404
 from rest_framework.response import Response
 from api.utils import APIKeyValidator
 
