@@ -50,18 +50,30 @@ class CallerList(APIView):
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 	def saveItem(self, item):
-		serializer = CallerSerializer(data=item)
-		if serializer.is_valid():
-			serializer.save()
-			caller = Caller.objects.get(pk=serializer.data.get('id'))
+		number = item.get('number')
+		if number.startswith('0'):
+			number = number[1:]
+		if number.startswith('+84'):
+			number = number[3:]
+		if Caller.objects.filter(number=number).exists():
+			caller = Caller.objects.filter(number=number)[0]
+		else:
+			serializer = CallerSerializer(data=item)
+			if serializer.is_valid():
+				serializer.save()
+				caller = Caller.objects.get(pk=serializer.data.get('id'))
 
+
+
+
+		if caller is not None:
 			#Save caller_category to intermediate table
 			for category in item.get('category'):
 				temp_category = Category.objects.get(pk=category['id'])
 				caller_category = CallerCategory.objects.create(caller = caller,
                                                                 category = temp_category, assign_type = category['assign_type'])
-			serializer = CallerSerializer(caller)
-			return serializer
+
+			return True
 		callerViewLogger.info("Bad request with invalid data %s", item)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
