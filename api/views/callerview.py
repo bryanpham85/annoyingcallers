@@ -94,12 +94,10 @@ class CallerList(APIView):
 		if number.startswith('+84'):
 			number = number[3:]
 		if Caller.objects.filter(number=number).exists():
-			print("AAAAAAAAA")
 			callers = Caller.objects.filter(number=number)
 			for callerindex in range(len(callers)):
 				exist = callers[callerindex]
 				for cateindex in range(len(caller.get('category'))):
-					print("HERERERERERE")
 					categories = Category.objects.filter(id=caller.get('category')[cateindex].get('id'))
 
 					if CallerCategory.objects.filter(caller = exist, category=categories[0]).exists():
