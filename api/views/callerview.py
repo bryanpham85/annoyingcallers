@@ -62,13 +62,14 @@ class CallerList(APIView):
 			if serializer.is_valid():
 				serializer.save()
 				caller = Caller.objects.get(pk=serializer.data.get('id'))
-
-
-
-
 		if caller is not None:
 			#Save caller_category to intermediate table
 			for category in item.get('category'):
+				categories = Category.objects.filter(id=category.get('id'))
+				check = self.validateCallerCategory(caller, categories[0])
+				if isinstance(check, Response):
+					continue #### Ignore this item if validate failed
+				print("Adding: " + caller.number + " for Category:" + category.get('name'))
 				temp_category = Category.objects.get(pk=category['id'])
 				caller_category = CallerCategory.objects.create(caller = caller,
                                                                 category = temp_category, assign_type = category['assign_type'])
@@ -79,43 +80,43 @@ class CallerList(APIView):
 
 
 	def validateCaller(self, caller):
+
 		if caller.get('category') is None or len(caller.get('category')) <= 0 or caller.get('category')[0].get('id') is None:
+			print("Category Id should be provied")
 			return Response('Category Id should be provied', status=status.HTTP_400_BAD_REQUEST)
-
-		if Category.objects.filter(id=caller.get('category')[0].get('id')).exists() is False:
-			return Response('Category Id not found', status=status.HTTP_404_NOT_FOUND)
-
 		if caller.get('id') is not None:
+			print("callerId should be null for Post Request")
 			return Response('callerId should be null for Post Request', status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 		if caller.get('number') is None:
+			print("Caller Number should be provided ")
 			return Response('Caller Number should be provided', status=status.HTTP_400_BAD_REQUEST)
 
 		#check valid phone number
-		if re.fullmatch("(0|\+84)[1-9]{1}[0-9]{8}([0-9]{1})?", caller.get('number')) is None:
+		if re.fullmatch("(0|\+84)?[1-9]{1}[0-9]{8}([0-9]{1})?", caller.get('number')) is None:
+			print("Number is not in good format:" + caller.get('number'))
 			return Response("Number is not in good format")
 
 		if caller.get('country_code') is None:
+			print("Country Code should be provided:" + caller.get('number'))
 			return Response('Country Code should be provided', status=status.HTTP_400_BAD_REQUEST)
 
 		if caller.get('registered_by_device') is None:
+			print("Registered Device should be provided:" + caller.get('number'))
 			return Response('Registered Device should be provided', status=status.HTTP_400_BAD_REQUEST)
-		number = caller.get('number')
-		if number.startswith('0'):
-			number = number[1:]
-		if number.startswith('+84'):
-			number = number[3:]
-		if Caller.objects.filter(number=number).exists():
-			print("AAAAAAAAA")
-			callers = Caller.objects.filter(number=number)
-			for callerindex in range(len(callers)):
-				exist = callers[callerindex]
-				for cateindex in range(len(caller.get('category'))):
-					print("HERERERERERE")
-					categories = Category.objects.filter(id=caller.get('category')[cateindex].get('id'))
 
-					if CallerCategory.objects.filter(caller = exist, category=categories[0]).exists():
-						return Response('Caller Number exists', status=status.HTTP_400_BAD_REQUEST)
+
+
+	def validateCallerCategory(self, caller, category):
+		if Category.objects.filter(id=category.id).exists() is False:
+			print("Category Id not found: " + category.id)
+			return Response('Category Id not found', status=status.HTTP_404_NOT_FOUND)
+
+		categories = Category.objects.filter(id=category.id)
+		if CallerCategory.objects.filter(caller=caller, category=categories[0]).exists():
+			print("Number:" + caller.number + " for Category: " + category.name + " exists")
+			return Response('Caller Number exists', status=status.HTTP_400_BAD_REQUEST)
+		return True
 class CallerDetail(APIView):
 
 	def get_object(self, pk):
